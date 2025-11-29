@@ -11,6 +11,13 @@ router = APIRouter()
 @router.post("/register", response_model=AuthRead, status_code=status.HTTP_201_CREATED)
 async def register(auth_data: AuthCreate, db: Session = Depends(get_db)):
     """Регистрация нового пользователя"""
+    # Валидация роли
+    if auth_data.role not in ["Студент", "Организатор"]:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Роль должна быть 'Студент' или 'Организатор'"
+        )
+    
     # Проверяем, существует ли пользователь с таким login
     existing_user = db.query(Auth).filter(Auth.login == auth_data.login).first()
     if existing_user:
@@ -31,7 +38,8 @@ async def register(auth_data: AuthCreate, db: Session = Depends(get_db)):
     new_user = Auth(
         login=auth_data.login,
         email=auth_data.email,
-        password_hash=hashed_password
+        password_hash=hashed_password,
+        role=auth_data.role
     )
     
     db.add(new_user)
@@ -41,18 +49,39 @@ async def register(auth_data: AuthCreate, db: Session = Depends(get_db)):
     return new_user
 
 
-@router.post("/login")
+@router.post("/login", response_model=AuthRead)
 async def login(auth_data: AuthLogin, db: Session = Depends(get_db)):
     """Авторизация пользователя"""
-    # Ищем пользователя по login или email
-    user = db.query(Auth).filter(
-        (Auth.login == auth_data.login) | (Auth.email == auth_data.email)
-    ).first()
+    # Проверяем, что хотя бы одно поле заполнено
+    if not auth_data.login and not auth_data.email:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Необходимо указать логин или email"
+        )
+    
+    # Валидация роли
+    if not auth_data.role or auth_data.role not in ["Студент", "Организатор"]:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Роль должна быть 'Студент' или 'Организатор'"
+        )
+    
+    # Ищем пользователя по login или email с учетом роли
+    query = db.query(Auth).filter(Auth.role == auth_data.role)
+    
+    if auth_data.login and auth_data.email:
+        user = query.filter(
+            (Auth.login == auth_data.login) | (Auth.email == auth_data.email)
+        ).first()
+    elif auth_data.login:
+        user = query.filter(Auth.login == auth_data.login).first()
+    else:
+        user = query.filter(Auth.email == auth_data.email).first()
     
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Неверный логин/email или пароль"
+            detail="Неверный логин/email, пароль или роль"
         )
     
     # Проверяем пароль
@@ -69,7 +98,8 @@ async def login(auth_data: AuthLogin, db: Session = Depends(get_db)):
             detail="Аккаунт деактивирован"
         )
     
-    return HTTPException(status_code=200, detail="Log In")
+    return user
+
 
 
 @router.get("/me", response_model=AuthRead)
