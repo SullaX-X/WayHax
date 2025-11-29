@@ -19,5 +19,4 @@ class AuthLogin(BaseModel):
     login: str | None = Field(default=None, min_length=3, max_length=25)
     email: EmailStr | None = Field(default=None, max_length=100)
     password: str = Field(min_length=8, max_length=128, strip_whitespace=True)
-    role: str = Field(description="Роль пользователя: 'Студент' или 'Организатор'")
-    
+    role: str

@@ -152,10 +152,8 @@ async function register(event) {
         
         if (response.ok) {
             const userData = await response.json();
-            // Сохраняем данные пользователя
             storage.set('user', userData);
             showSuccess('Регистрация успешна! Перенаправление...');
-            // Перенаправляем на главную страницу через 1 секунду
             setTimeout(() => {
                 window.location.href = '/';
             }, 1000);
@@ -239,10 +237,8 @@ async function login(event) {
         
         if (response.ok) {
             const userData = await response.json();
-            // Сохраняем данные пользователя
             storage.set('user', userData);
             showSuccess('Вход выполнен успешно! Перенаправление...');
-            // Перенаправляем на главную страницу через 1 секунду
             setTimeout(() => {
                 window.location.href = '/';
             }, 1000);
@@ -260,37 +256,57 @@ async function login(event) {
     }
 }
 
-// Функция выхода
 function logout() {
     storage.remove('user');
-    window.location.href = '/login';
 }
 
-// Функция загрузки информации о пользователе
-async function loadUserInfo() {
+function loadUserInfo() {
     const user = storage.get('user');
+    const authButtons = document.getElementById('auth-buttons');
+    const userSection = document.getElementById('user-section');
+    
     if (!user) {
-        // Если пользователь не авторизован, перенаправляем на страницу входа
-        window.location.href = '/login';
+        if (authButtons) authButtons.style.display = 'flex';
+        if (userSection) userSection.style.display = 'none';
         return;
     }
     
-    // Отображаем информацию о пользователе
+    if (authButtons) authButtons.style.display = 'none';
+    if (userSection) userSection.style.display = 'block';
+    
     const userInfoDiv = document.getElementById('user-info');
     if (userInfoDiv) {
-        userInfoDiv.innerHTML = `
-            <h2>Добро пожаловать, ${user.login}!</h2>
-            <p><strong>ID:</strong> ${user.id}</p>
-            <p><strong>Логин:</strong> ${user.login}</p>
-            <p><strong>Роль:</strong> ${user.role}</p>
-            <p><strong>Дата регистрации:</strong> ${new Date(user.created_at).toLocaleString('ru-RU')}</p>
-        `;
+        let html = `<h2>Добро пожаловать, ${user.login}!</h2>`;
+        html += `<p><strong>Логин:</strong> ${user.login}</p>`;
+        html += `<p><strong>Роль:</strong> ${user.role}</p>`;
+        if (user.email) {
+            html += `<p><strong>Email:</strong> ${user.email}</p>`;
+        }
+        userInfoDiv.innerHTML = html;
     }
 }
 
-// Инициализация при загрузке страницы
+function initTabs() {
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetTab = btn.getAttribute('data-tab');
+            
+            tabButtons.forEach(b => b.classList.remove('active'));
+            tabContents.forEach(c => c.classList.remove('active'));
+            
+            btn.classList.add('active');
+            const targetContent = document.getElementById(`${targetTab}-tab`);
+            if (targetContent) {
+                targetContent.classList.add('active');
+            }
+        });
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-    // Регистрация обработчиков форм
     const registerForm = document.getElementById('register-form');
     if (registerForm) {
         registerForm.addEventListener('submit', register);
@@ -301,15 +317,17 @@ document.addEventListener('DOMContentLoaded', function() {
         loginForm.addEventListener('submit', login);
     }
     
-    // Загрузка информации о пользователе на главной странице
     if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
         loadUserInfo();
+        initTabs();
     }
     
-    // Обработчик кнопки выхода
     const logoutBtn = document.getElementById('logout-btn');
     if (logoutBtn) {
-        logoutBtn.addEventListener('click', logout);
+        logoutBtn.addEventListener('click', function() {
+            logout();
+            window.location.href = '/';
+        });
     }
 });
 
