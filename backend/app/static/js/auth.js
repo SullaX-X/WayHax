@@ -152,10 +152,15 @@ async function register(event) {
         
         if (response.ok) {
             const userData = await response.json();
+<<<<<<< HEAD
             // Сохраняем данные пользователя
             storage.set('user', userData);
             showSuccess('Регистрация успешна! Перенаправление...');
             // Перенаправляем на главную страницу через 1 секунду
+=======
+            storage.set('user', userData);
+            showSuccess('Регистрация успешна! Перенаправление...');
+>>>>>>> 9ee180f22f4de2aff5af43109ce0370c8150a798
             setTimeout(() => {
                 window.location.href = '/';
             }, 1000);
@@ -239,10 +244,15 @@ async function login(event) {
         
         if (response.ok) {
             const userData = await response.json();
+<<<<<<< HEAD
             // Сохраняем данные пользователя
             storage.set('user', userData);
             showSuccess('Вход выполнен успешно! Перенаправление...');
             // Перенаправляем на главную страницу через 1 секунду
+=======
+            storage.set('user', userData);
+            showSuccess('Вход выполнен успешно! Перенаправление...');
+>>>>>>> 9ee180f22f4de2aff5af43109ce0370c8150a798
             setTimeout(() => {
                 window.location.href = '/';
             }, 1000);
@@ -260,6 +270,7 @@ async function login(event) {
     }
 }
 
+<<<<<<< HEAD
 // Функция выхода
 function logout() {
     storage.remove('user');
@@ -291,6 +302,59 @@ async function loadUserInfo() {
 // Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', function() {
     // Регистрация обработчиков форм
+=======
+function logout() {
+    storage.remove('user');
+}
+
+function loadUserInfo() {
+    const user = storage.get('user');
+    const authButtons = document.getElementById('auth-buttons');
+    const userSection = document.getElementById('user-section');
+    
+    if (!user) {
+        if (authButtons) authButtons.style.display = 'flex';
+        if (userSection) userSection.style.display = 'none';
+        return;
+    }
+    
+    if (authButtons) authButtons.style.display = 'none';
+    if (userSection) userSection.style.display = 'block';
+    
+    const userInfoDiv = document.getElementById('user-info');
+    if (userInfoDiv) {
+        let html = `<h2>Добро пожаловать, ${user.login}!</h2>`;
+        html += `<p><strong>Логин:</strong> ${user.login}</p>`;
+        html += `<p><strong>Роль:</strong> ${user.role}</p>`;
+        if (user.email) {
+            html += `<p><strong>Email:</strong> ${user.email}</p>`;
+        }
+        userInfoDiv.innerHTML = html;
+    }
+}
+
+function initTabs() {
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetTab = btn.getAttribute('data-tab');
+            
+            tabButtons.forEach(b => b.classList.remove('active'));
+            tabContents.forEach(c => c.classList.remove('active'));
+            
+            btn.classList.add('active');
+            const targetContent = document.getElementById(`${targetTab}-tab`);
+            if (targetContent) {
+                targetContent.classList.add('active');
+            }
+        });
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+>>>>>>> 9ee180f22f4de2aff5af43109ce0370c8150a798
     const registerForm = document.getElementById('register-form');
     if (registerForm) {
         registerForm.addEventListener('submit', register);
@@ -301,6 +365,7 @@ document.addEventListener('DOMContentLoaded', function() {
         loginForm.addEventListener('submit', login);
     }
     
+<<<<<<< HEAD
     // Загрузка информации о пользователе на главной странице
     if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
         loadUserInfo();
@@ -310,6 +375,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const logoutBtn = document.getElementById('logout-btn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', logout);
+=======
+    if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
+        loadUserInfo();
+        initTabs();
+    }
+    
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function() {
+            logout();
+            window.location.href = '/';
+        });
+>>>>>>> 9ee180f22f4de2aff5af43109ce0370c8150a798
     }
 });
 

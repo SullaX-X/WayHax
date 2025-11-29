@@ -113,7 +113,10 @@ const INITIAL_APPLICATIONS: Application[] = [
 interface User {
   id: number;
   login: string;
+<<<<<<< HEAD
   email: string;
+=======
+>>>>>>> 9ee180f22f4de2aff5af43109ce0370c8150a798
   role: string;
   created_at: string;
 }
@@ -141,6 +144,7 @@ const App = () => {
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
     if (savedUser) {
+<<<<<<< HEAD
       try {
         const userData = JSON.parse(savedUser);
         setUser(userData);
@@ -149,6 +153,9 @@ const App = () => {
         console.error('Ошибка при загрузке пользователя:', error);
         localStorage.removeItem('user');
       }
+=======
+      setUser(JSON.parse(savedUser));
+>>>>>>> 9ee180f22f4de2aff5af43109ce0370c8150a798
     }
   }, []);
 
