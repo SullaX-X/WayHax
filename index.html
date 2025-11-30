@@ -3,12 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Единый Портал Конкурсов</title>
+    <title>EduContest | Единый Портал</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                        'slide-up': 'slideUp 0.5s ease-out',
+                        'scale-in': 'scaleIn 0.3s ease-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        scaleIn: {
+                            '0%': { transform: 'scale(0.95)', opacity: '0' },
+                            '100%': { transform: 'scale(1)', opacity: '1' },
+                        }
+                    }
+                }
+            },
+            safelist: [
+                'bg-blue-600', 'text-blue-600', 'border-blue-200', 'bg-blue-50', 'hover:bg-blue-700', 'focus:ring-blue-500',
+                'bg-green-600', 'text-green-600', 'border-green-200', 'bg-green-50', 'hover:bg-green-700', 'focus:ring-green-500',
+                'bg-purple-600', 'text-purple-600', 'border-purple-200', 'bg-purple-50', 'hover:bg-purple-700', 'focus:ring-purple-500',
+                'bg-orange-600', 'text-orange-600', 'border-orange-200', 'bg-orange-50', 'hover:bg-orange-700', 'focus:ring-orange-500',
+                'text-sm', 'text-base', 'text-lg', 'text-xl'
+            ]
+        }
+    </script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        /* Accessibility Modes */
+        .high-contrast {
+            filter: contrast(1.25);
+        }
+        .high-contrast * {
+            border-color: #000 !important;
+        }
+        .hide-images img, 
+        .hide-images .bg-cover {
+            opacity: 0 !important;
+            visibility: hidden !important;
+            background-image: none !important;
+            background-color: #cbd5e1 !important; /* slate-300 */
         }
     </style>
 <script type="importmap">
@@ -17,14 +71,15 @@
     "react": "https://aistudiocdn.com/react@^19.2.0",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
     "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react-router-dom": "https://aistudiocdn.com/react-router-dom@^7.9.6",
     "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0"
   }
 }
 </script>
 <link rel="stylesheet" href="/index.css">
 </head>
-<body class="bg-slate-50 text-slate-900">
+<body class="bg-slate-50 text-slate-900 h-full">
     <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
+<script type="module" src="/index.tsx"></script>
 </body>
 </html>
